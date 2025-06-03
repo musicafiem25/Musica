@@ -8,6 +8,11 @@ import react from '@vitejs/plugin-react'
 })*/
 export default {
   plugins: [react()],
+  preview: {
+    port: parseInt(process.env.PORT) || 4173,
+    host: '0.0.0.0',
+    allowedHosts: ['musica-r9re.onrender.com'], // ✅ Add your Render domain here
+  },
   server: {
     proxy: {
       '/api': 'https://musica-server-rzrh.onrender.com', // assuming backend runs on port 5000
