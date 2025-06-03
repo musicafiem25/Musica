@@ -10,7 +10,7 @@ export default {
   plugins: [react()],
   server: {
     proxy: {
-      '/api': 'http://localhost:5000', // assuming backend runs on port 5000
+      '/api': 'https://musica-server-rzrh.onrender.com', // assuming backend runs on port 5000
     },
   },
 };
