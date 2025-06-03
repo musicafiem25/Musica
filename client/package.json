@@ -9,7 +9,7 @@
   "build": "vite build",
   "lint": "eslint .",
   "preview": "vite preview",
-  "start": "vite preview --port $PORT"
+  "start": "vite preview --host --port $PORT"
 },
   "dependencies": {
     "@react-oauth/google": "^0.12.1",
