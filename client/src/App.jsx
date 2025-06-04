@@ -18,7 +18,7 @@ import AdminDashboard from "./files/AdminDashboard";
 // import ArtistAlbums from "./files/ArtistAlbums";
 import ArtistAlbumsWithDetails from "./files/ArtistAlbumsWithDetails";
 
-//import './App.css';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const App = () => {
   const location = useLocation();
