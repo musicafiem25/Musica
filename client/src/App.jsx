@@ -13,9 +13,6 @@ import CategoryWithSubPlaylists from "./files/CategoryWithSubPlaylists";
 import SubPlaylistTracks from "./files/SubPlaylistTracks";
 import AdminLogin from "./files/AdminLogin";
 import AdminDashboard from "./files/AdminDashboard";
-// import GenrePage from "./files/GenrePage";
-// import ArtistAlbumsAndTracks from "./files/ArtistAlbumsAndTracks";
-// import ArtistAlbums from "./files/ArtistAlbums";
 import ArtistAlbumsWithDetails from "./files/ArtistAlbumsWithDetails";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -93,7 +90,7 @@ const App = () => {
   // Add track to Recently Played & notify RecentlyPlayed.jsx to refetch
   const addToRecentlyPlayed = async (track) => {
     try {
-      await axios.post("http://localhost:5000/api/auth/play", { track }, {
+      await axios.post(`${API_BASE_URL}/api/auth/play`, { track }, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       setRecentlyUpdated(prev => !prev); // Toggle to trigger useEffect
