@@ -94,7 +94,7 @@ const Navbar = ({ currentTrack, isPlaying, togglePlayPause, handleLogout }) => {
               return Swal.fire("Error", "User email not available", "error");
             }
 
-            const res = await fetch("http://localhost:5000/api/auth/delete", {
+            const res = await fetch(`${API_BASE_URL}/api/auth/delete`, {
               method: "DELETE",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ email: userEmail }),
