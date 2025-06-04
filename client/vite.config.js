@@ -11,7 +11,7 @@ export default {
   preview: {
     port: parseInt(process.env.PORT) || 4173,
     host: '0.0.0.0',
-    allowedHosts: ['musica-r9re.onrender.com'], // ✅ Add your Render domain here
+    allowedHosts: ['https://musica-mca-major-sts-2025.onrender.com'], // ✅ Add your Render domain here
   },
   server: {
     proxy: {
