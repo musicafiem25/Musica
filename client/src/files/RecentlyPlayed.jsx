@@ -3,8 +3,10 @@ import axios from "axios";
 import Display from "./Display";
 import TrackCard from "./TrackCard";
 import Lottie from "lottie-react";
-import play from "../play.json"; // Update the path as needed
+import play from "../play.json";
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const RecentlyPlayed = ({
   currentTrack,
   isPlaying,
@@ -43,21 +45,19 @@ const RecentlyPlayed = ({
   const secondHalf = songs.slice(midIndex);
 
   const handleLike = (track) => {
-    const alreadyLiked = likedTracks.some((t) => t.id === track.id);
-    if (alreadyLiked) {
-      setLikedTracks((prev) => prev.filter((t) => t.id !== track.id));
-    } else {
-      setLikedTracks((prev) => [...prev, track]);
-    }
+    setLikedTracks((prev) =>
+      prev.some((t) => t.id === track.id)
+        ? prev.filter((t) => t.id !== track.id)
+        : [...prev, track]
+    );
   };
 
   const handlePin = (track) => {
-    const alreadyPinned = pinnedTracks.some((t) => t.id === track.id);
-    if (alreadyPinned) {
-      setPinnedTracks((prev) => prev.filter((t) => t.id !== track.id));
-    } else {
-      setPinnedTracks((prev) => [...prev, track]);
-    }
+    setPinnedTracks((prev) =>
+      prev.some((t) => t.id === track.id)
+        ? prev.filter((t) => t.id !== track.id)
+        : [...prev, track]
+    );
   };
 
   if (loading) {
@@ -68,12 +68,28 @@ const RecentlyPlayed = ({
     );
   }
 
+  if (!loading && songs.length === 0) {
+    return (
+      <>
+        <div className="min-h-screen bg-gray text-white p-6 pb-36">
+          <div className="max-w-7xl mx-auto">
+            <h1 className="text-3xl font-bold text-center text-teal-500 mb-8">
+              🎧 Recently Played
+            </h1>
+            <p className="text-center text-gray-300">No recently played songs found yet.</p>
+          </div>
+        </div>
+      </>
+
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray text-white p-6 pb-36">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-center text-teal-500 mb-8">🎧 Recently Played</h1>
-
-        {/* First Row */}
+        <h1 className="text-3xl font-bold text-center text-teal-500 mb-8">
+          🎧 Recently Played
+        </h1>
         <div className="overflow-x-auto scrollbar-hide whitespace-nowrap mb-8">
           <div className="flex gap-32">
             {firstHalf.map((track) => (
@@ -96,7 +112,6 @@ const RecentlyPlayed = ({
           </div>
         </div>
 
-        {/* Second Row */}
         <div className="overflow-x-auto scrollbar-hide whitespace-nowrap">
           <div className="flex gap-32">
             {secondHalf.map((track) => (
@@ -120,7 +135,6 @@ const RecentlyPlayed = ({
         </div>
       </div>
 
-      {/* Sticky Display */}
       <div className="fixed bottom-0 left-0 w-full bg-[#1e1e1e] border-gray-700">
         <Display />
       </div>
