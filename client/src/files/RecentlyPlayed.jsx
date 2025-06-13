@@ -18,9 +18,10 @@ const RecentlyPlayed = ({
   const [songs, setSongs] = useState([]);
   const [likedTracks, setLikedTracks] = useState([]);
   const [pinnedTracks, setPinnedTracks] = useState([]);
+  const [likedMusic, setLikedMusic] = useState([]);
+  const [pinnedMusic, setPinnedMusic] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
+   useEffect(() => {
     const fetchRecentlyPlayed = async () => {
       try {
         const res = await axios.get(`${API_BASE_URL}/api/auth/recently-played`, {
@@ -43,21 +44,74 @@ const RecentlyPlayed = ({
   const midIndex = Math.ceil(songs.length / 2);
   const firstHalf = songs.slice(0, midIndex);
   const secondHalf = songs.slice(midIndex);
-
-  const handleLike = (track) => {
-    setLikedTracks((prev) =>
-      prev.some((t) => t.id === track.id)
-        ? prev.filter((t) => t.id !== track.id)
-        : [...prev, track]
-    );
+  const notifyLoginRequired = () => {
+    Swal.fire({
+      icon: "warning",
+      title: "Login Required",
+      text: "Please log in to like, pin, or download songs.",
+      confirmButtonColor: "#3085d6",
+      confirmButtonText: "Login"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "/login";
+      }
+    });
   };
 
-  const handlePin = (track) => {
-    setPinnedTracks((prev) =>
-      prev.some((t) => t.id === track.id)
-        ? prev.filter((t) => t.id !== track.id)
-        : [...prev, track]
-    );
+  const handleLike = async (track) => {
+    if (!token) {
+      notifyLoginRequired();
+      return;
+    }
+    const isLiked = likedMusic.some((item) => item.id === track.id);
+    const updated = isLiked
+      ? likedMusic.filter((item) => item.id !== track.id)
+      : [...likedMusic, track];
+    setLikedMusic(updated);
+    localStorage.setItem("likedMusic", JSON.stringify(updated));
+
+    try {
+      await axios.post(
+        `${API_BASE_URL}/api/auth/like`,
+        { track, like: !isLiked },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+    } catch (err) {
+      console.error("Sync like failed:", err);
+    }
+  };
+
+  const handlePin = async (track) => {
+    if (!token) {
+      notifyLoginRequired();
+      return;
+    }
+    const isPinned = pinnedMusic.some((item) => item.id === track.id);
+    const updated = isPinned
+      ? pinnedMusic.filter((item) => item.id !== track.id)
+      : [...pinnedMusic, track];
+    setPinnedMusic(updated);
+    localStorage.setItem("pinnedMusic", JSON.stringify(updated));
+
+    try {
+      await axios.post(
+        `${API_BASE_URL}/api/auth/pin`,
+        { track, pin: !isPinned },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+    } catch (err) {
+      console.error("Sync pin failed:", err);
+    }
+  };
+  const handleDownload = (track) => {
+    if (!token) {
+      notifyLoginRequired();
+      return;
+    }
+    const link = document.createElement('a');
+    link.href = track.preview_url;
+    link.download = `${track.name}-preview.mp3`;
+    link.click();
   };
 
   if (loading) {
@@ -96,13 +150,13 @@ const RecentlyPlayed = ({
               <div key={track.id} className="inline-block min-w-[200px]">
                 <TrackCard
                   track={track}
-                  isLiked={likedTracks.some((t) => t.id === track.id)}
-                  isPinned={pinnedTracks.some((t) => t.id === track.id)}
+                  isLiked={likedMusic.some((t) => t.id === track.id)}
+                  isPinned={pinnedMusic.some((t) => t.id === track.id)}
                   isCurrent={currentTrack?.id === track.id}
                   isPlaying={isPlaying}
                   handlePin={handlePin}
                   handleLike={handleLike}
-                  handleDownload={() => window.open(track.preview_url, "_blank")}
+                  handleDownload={handleDownload}
                   togglePlayPause={togglePlayPause}
                   addToRecentlyPlayed={addToRecentlyPlayed}
                   userName={userName}
@@ -118,13 +172,13 @@ const RecentlyPlayed = ({
               <div key={track.id} className="inline-block min-w-[200px]">
                 <TrackCard
                   track={track}
-                  isLiked={likedTracks.some((t) => t.id === track.id)}
-                  isPinned={pinnedTracks.some((t) => t.id === track.id)}
+                  isLiked={likedMusic.some((t) => t.id === track.id)}
+                  isPinned={pinnedMusic.some((t) => t.id === track.id)}
                   isCurrent={currentTrack?.id === track.id}
                   isPlaying={isPlaying}
                   handlePin={handlePin}
                   handleLike={handleLike}
-                  handleDownload={() => window.open(track.preview_url, "_blank")}
+                  handleDownload={handleDownload}
                   togglePlayPause={togglePlayPause}
                   addToRecentlyPlayed={addToRecentlyPlayed}
                   userName={userName}
